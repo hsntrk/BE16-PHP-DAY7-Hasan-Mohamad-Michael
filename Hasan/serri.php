@@ -5,7 +5,7 @@ class Database
     public $db_name = "test"; // you must write your db name
     public $db_user = "root";
     public $db_pw = "";
-    public $connection = '';
+    public $connection;
     // public function chooseDB($dbHost, $dbName, $dbUser, $dbPw){
     //  $this->connection = mysqli_connect($dbHost, $dbUser, $dbPw, $dbName);
     // }
