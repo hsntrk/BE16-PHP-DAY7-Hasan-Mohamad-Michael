@@ -2,7 +2,7 @@
 class Database
 {
     public $db_host = "localhost";
-    public $db_name = "test"; // you must write your db name
+    public $db_name = "restaurant"; // you must write your db name
     public $db_user = "root";
     public $db_pw = "";
     public $connection;
@@ -12,16 +12,20 @@ class Database
     public function connect()
     {
         //the @ sign will remove any warnings from mysqli!
-        $this->connection = @mysqli_connect($this->db_host, $this->db_user, $this->db_pw, $this->db_name);
+        $this->connection = @new mysqli($this->db_host, $this->db_user, $this->db_pw, $this->db_name);
     }
     // SELECT * FROM TableName $join
     // SELECT first_name from users
     // SELECT first_name , last_name from users
+    // select * from users where id = 1
+    // SELECT id, fname,lname,whatever from table
+    // "id, firstname, lastname,email "
+    // array("id", "fname", "email")
     public function read($table, $fields = '*', $join = '', $where = '', $orderby = '')
     {
         $this->connect(); // $this->connection;
         //array(first_name, lastname) => firstname , lastname  /////    firstname
-        $fields = is_array($fields) ? implode(", ", $fields) : $fields;
+        // $fields = is_array($fields) ? implode(", ", $fields) : $fields;
         // inner join tableName on --------- inner join table2 on -------------
         $join = is_array($join) ? implode(" ", $join) : $join;
         $sql = "SELECT " . $fields . " FROM " . $table . " " . $join . " " . $where . " " . $orderby . " ;";
@@ -35,8 +39,8 @@ class Database
         } else {
             $row = $result->fetch_all(MYSQLI_ASSOC);
         }
-        mysqli_close($this->connection);
-        return $row;
+        $this->connection->close();
+        return array($row, $result->num_rows);
     }
     //read("users",array("first_name","last_name"))
     //read("users","first_name")
@@ -50,6 +54,7 @@ class Database
         $where = '';
         // $sql = ''  => $sql = 'first_name = 'serri''
         // 'first_name = 'serri', last_name = value '
+
         foreach ($set as $key => $value) {
             // $sql = first_name = 'serri', last_name = ghiath
             if ($sql != '') {
@@ -84,6 +89,7 @@ class Database
         //$values = implode("','", $values);
         $sql = '';
         // $values 'ghiath', 'serri', 30
+        // " 'John', 'Doe', 20 "
         if (is_array($values)) {
             foreach ($values as $value) {
                 if ($sql != '') {
@@ -126,6 +132,23 @@ class Database
     }
 }
 $obj = new Database();
+
+$obj->insert("proudct", array("price", "pic", "dis", "name", "status"), array(12, "test", "test dis", "John", "user"));
+
+// $id = 7;
+// $result = $obj->read("proudct");
+// if ($result[1] == 0) {
+//     echo $result[0];
+// } elseif ($result[1] == 1) {
+//     echo "<p>{$result[0]["price"]}</p>";
+// } else {
+//     foreach ($result[0] as $row) {
+//         echo "<p>{$row["price"]} <br> {$row["dis"]}</p>";
+//     }
+// }
+    
+
+
 // read($table, $fields='*', $join='',$where='',$orderby='')
 // $result = $obj->read("media", '*', 'INNER JOIN author ON media.FK_author = author.authorId' );
 // foreach ($result as $value) {
